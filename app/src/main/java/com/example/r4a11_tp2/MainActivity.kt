@@ -1,5 +1,6 @@
 package com.example.r4a11_tp2
 
+import android.graphics.Paint.Align
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -71,6 +72,9 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
             composable("form") {
                 FormScreen(navController = navController)
             }
+            composable("affForm") {
+                AffFormScreen(navController = navController)
+            }
         }
 }
 
@@ -116,8 +120,31 @@ fun FormScreen(navController: NavController) {
         Spacer(modifier = Modifier.height(12.dp))
 
         Button(
+            onClick = { navController.navigate("affForm")}) {
+            Text("Valider")
+        }
+
+        Button(
             onClick = { navController.popBackStack() }) {
             Text(text = "Retour")
+        }
+    }
+}
+
+@Composable
+fun AffFormScreen(navController: NavController) {
+    Column (
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("Affichage du formulaire", style = MaterialTheme.typography.titleMedium)
+        Spacer(modifier = Modifier.height(12.dp))
+        Button(
+            onClick = { navController.popBackStack() }) {
+            Text("Retour")
         }
     }
 }
