@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -73,11 +75,14 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
                 FormScreen(navController = navController)
             }
             composable(
-                route = "display/{name}",
-                arguments = listOf(navArgument("name") { defaultValue = ""})
+                route = "display/{name}/{age}",
+                arguments = listOf(
+                    navArgument("name") { defaultValue = ""},
+                    navArgument("age") { defaultValue = ""})
             ) { backStackEntry ->
                 val name = backStackEntry.arguments?.getString("name") ?: ""
-                AffFormScreen(navController = navController, name)
+                val age = backStackEntry.arguments?.getString("age") ?: ""
+                AffFormScreen(navController = navController, name, age)
             }
         }
 }
@@ -121,10 +126,21 @@ fun FormScreen(navController: NavController) {
                 .padding(16.dp)
         )
 
+        var age by remember { mutableStateOf("")}
+        TextField(
+            value = age,
+            keyboardOptions = KeyboardOptions( keyboardType = KeyboardType.NumberPassword ),
+            onValueChange = { newAge -> age = newAge },
+            label = { Text("Entrez votre âge")},
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+            )
+
         Spacer(modifier = Modifier.height(12.dp))
 
         Button(
-            onClick = { navController.navigate("display/$name")}) {
+            onClick = { navController.navigate("display/$name/$age")}) {
             Text("Valider")
         }
 
@@ -136,7 +152,7 @@ fun FormScreen(navController: NavController) {
 }
 
 @Composable
-fun AffFormScreen(navController: NavController, name : String) {
+fun AffFormScreen(navController: NavController, name : String, age : String) {
     Column (
         modifier = Modifier
             .fillMaxSize()
@@ -144,10 +160,15 @@ fun AffFormScreen(navController: NavController, name : String) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Affichage du formulaire", style = MaterialTheme.typography.titleMedium)
+        Text("Bienvenue,", style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.height(12.dp))
-        Text("Bienvenue, $name", style = MaterialTheme.typography.titleMedium)
+
+        Text(name, style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.height(12.dp))
+
+        Text("Vous avez $age ans !", style = MaterialTheme.typography.titleMedium)
+        Spacer(modifier = Modifier.height(12.dp))
+
         Button(
             onClick = { navController.popBackStack() }) {
             Text("Retour")
