@@ -1,6 +1,5 @@
 package com.example.r4a11_tp2
 
-import android.graphics.Paint.Align
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -29,6 +28,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.r4a11_tp2.ui.theme.R4A11_TP2Theme
 
 class MainActivity : ComponentActivity() {
@@ -72,8 +72,12 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
             composable("form") {
                 FormScreen(navController = navController)
             }
-            composable("affForm") {
-                AffFormScreen(navController = navController)
+            composable(
+                route = "display/{name}",
+                arguments = listOf(navArgument("name") { defaultValue = ""})
+            ) { backStackEntry ->
+                val name = backStackEntry.arguments?.getString("name") ?: ""
+                AffFormScreen(navController = navController, name)
             }
         }
 }
@@ -120,7 +124,7 @@ fun FormScreen(navController: NavController) {
         Spacer(modifier = Modifier.height(12.dp))
 
         Button(
-            onClick = { navController.navigate("affForm")}) {
+            onClick = { navController.navigate("display/$name")}) {
             Text("Valider")
         }
 
@@ -132,7 +136,7 @@ fun FormScreen(navController: NavController) {
 }
 
 @Composable
-fun AffFormScreen(navController: NavController) {
+fun AffFormScreen(navController: NavController, name : String) {
     Column (
         modifier = Modifier
             .fillMaxSize()
@@ -142,9 +146,13 @@ fun AffFormScreen(navController: NavController) {
     ) {
         Text("Affichage du formulaire", style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.height(12.dp))
+        Text("Bienvenue, $name", style = MaterialTheme.typography.titleMedium)
+        Spacer(modifier = Modifier.height(12.dp))
         Button(
             onClick = { navController.popBackStack() }) {
             Text("Retour")
         }
     }
 }
+
+
